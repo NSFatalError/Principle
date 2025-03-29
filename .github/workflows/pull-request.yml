@@ -1,0 +1,26 @@
+name: Pull request
+on: pull_request
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "GITHUB_TOKEN=${{ env.GITHUB_TOKEN }}" >> $GITHUB_ENV
+        curl https://mise.run | sh
+        mise install
+
+    - name: Lint
+      run: mise lint
+
+    - name: Build
+      run: swift build
+
+    - name: Test
+      run: swift test
