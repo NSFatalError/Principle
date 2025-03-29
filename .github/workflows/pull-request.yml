@@ -20,7 +20,7 @@ jobs:
       run: mise lint
 
     - name: Build
-      run: swift build -v
+      run: swift build
 
     - name: Test
-      run: swift test -v
+      run: swift test
