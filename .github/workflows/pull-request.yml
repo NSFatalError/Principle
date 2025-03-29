@@ -1,0 +1,23 @@
+name: Pull request
+on: pull_request
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup
+      run: |
+        curl https://mise.run | sh
+        mise install
+
+    - name: Lint
+      run: mise lint
+
+    - name: Build
+      run: swift build -v
+
+    - name: Test
+      run: swift test -v
