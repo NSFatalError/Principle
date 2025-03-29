@@ -1,0 +1,2 @@
+disabled_rules:
+    - no_magic_numbers
