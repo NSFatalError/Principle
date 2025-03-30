@@ -2,7 +2,7 @@ name: Pull request
 on: pull_request
 
 jobs:
-  build:
+  pull-request:
     runs-on: macos-15
 
     steps:
@@ -12,7 +12,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "GITHUB_TOKEN=${{ env.GITHUB_TOKEN }}" >> $GITHUB_ENV
         curl https://mise.run | sh
         mise install
 
