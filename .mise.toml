@@ -18,7 +18,6 @@ quiet = true
 run = """
 {{ vars.swiftlint }} lint \
 --config .swiftlint.yml \
---reporter relative-path \
 --strict \
 {{ vars.sources }}
 """
@@ -30,7 +29,6 @@ run = """
 {{ vars.swiftlint }} lint \
 --config .swiftlint.yml \
 --config .swiftlint.tests.yml \
---reporter relative-path \
 --strict \
 {{ vars.tests }}
 """
