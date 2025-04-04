@@ -6,5 +6,5 @@
 //  Copyright © 2025 Kamil Strzelecki. All rights reserved.
 //
 
-@_exported import PrincipleCollections
-@_exported import PrincipleConcurrency
+@_documentation(visibility: private) @_exported import PrincipleCollections
+@_documentation(visibility: private) @_exported import PrincipleConcurrency
