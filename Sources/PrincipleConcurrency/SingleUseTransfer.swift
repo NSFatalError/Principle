@@ -31,7 +31,7 @@
 public struct SingleUseTransfer<Wrapped: ~Copyable>: ~Copyable {
 
     private var value: Wrapped?
-    
+
     /// Initializes a new transfer, which the programmer must manually verify will not be mutated more than once.
     ///
     /// - Parameter value: A value the compiler considers unsafe to capture in a closure.

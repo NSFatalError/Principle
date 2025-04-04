@@ -9,7 +9,7 @@
 import Foundation
 
 extension StringProtocol {
-    
+
     /// A copy of the string with first character changed to its corresponding uppercased spelling.
     ///
     /// Unlike `capitalized(with:)` only the first character of the result may differ.

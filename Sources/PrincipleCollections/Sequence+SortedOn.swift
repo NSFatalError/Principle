@@ -9,15 +9,15 @@
 extension Sequence {
 
     /// Returns the elements of the sequence, sorted using the given projection and comparison function.
-    /// 
+    ///
     /// - Parameters:
     ///   - projection: A closure that retrieves values from the `Element` which will be compared.
     ///   - areInIncreasingOrder: A predicate that returns true if its first argument should be ordered before its second argument; otherwise, false.
     /// - Returns: A sorted array of the sequence’s elements.
-    /// 
+    ///
     /// Many types don’t naturally conform to `Comparable`, but they contain properties that can be used for ordering.
     /// Use this function to sort such types.
-    /// 
+    ///
     /// ### Usage
     /// ```swift
     /// people.sorted(on: \.name, by: >)
@@ -31,7 +31,7 @@ extension Sequence {
             try areInIncreasingOrder(projection(lhs), projection(rhs))
         }
     }
-    
+
     /// Returns the elements of the sequence, sorted using the given projection.
     ///
     /// - Parameter projection: A closure that retrieves `Comparable` values from the `Element`.
