@@ -1,6 +1,6 @@
 # ``PrincipleCollections``
 
-Essential tools that extend capabilities of Swift `Collection` types.
+Essential tools that extend the capabilities of Swift `Collection` types.
 
 ## Topics
 

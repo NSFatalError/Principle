@@ -1,6 +1,6 @@
 # ``PrincipleConcurrency``
 
-Essential tools that extend capabilities of Swift Concurrency.
+Essential tools that extend the capabilities of Swift Concurrency.
 
 ## Topics
 

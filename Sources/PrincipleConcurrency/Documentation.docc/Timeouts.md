@@ -14,7 +14,7 @@ Task {
             try await crunchNumbers()
         }
         // Function completed within the time limit
-    } catch is DeadlineExceededError {
+    } catch is TimeoutError {
         // Function exceeded the time limit and was cancelled
     } catch {
         // Function threw an error within the time limit
