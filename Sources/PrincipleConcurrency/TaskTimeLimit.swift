@@ -24,20 +24,22 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
     after deadline: C.Instant,
     tolerance: C.Instant.Duration?,
     clock: C,
-    isolation: isolated (any Actor)?,
     priority: TaskPriority?,
+    isolation: isolated (any Actor)?,
     operation: sending @escaping @isolated(any) () async throws -> Success
 ) async throws -> Success {
-    let operation = unsafeSendable(operation)
+    var transfer = SingleUseTransfer(operation)
 
     let result = await withTaskGroup(
         of: TaskTimeLimit.Event<Success>.self,
         returning: Result<Success, Error>.self,
         isolation: isolation,
         body: { group in
+            var transfer = transfer.take()
+
             group.addTask(priority: priority) {
                 do {
-                    let success = try await operation.perform()
+                    let success = try await transfer.finalize()()
                     return .taskFinished(.success(success))
                 } catch {
                     return .taskFinished(.failure(error))

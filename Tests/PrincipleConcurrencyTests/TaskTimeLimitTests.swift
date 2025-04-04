@@ -6,7 +6,7 @@
 //  Copyright © 2025 Kamil Strzelecki. All rights reserved.
 //
 
-@testable import Principle
+@testable import PrincipleConcurrency
 import Testing
 
 internal struct TaskTimeLimitTests {

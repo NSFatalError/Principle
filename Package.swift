@@ -6,26 +6,50 @@ import PackageDescription
 let package = Package(
     name: "Principle",
     platforms: [
-        .macOS(.v13),
-        .macCatalyst(.v16),
-        .iOS(.v16),
-        .tvOS(.v16),
-        .watchOS(.v9),
-        .visionOS(.v1)
+        .macOS(.v15),
+        .macCatalyst(.v18),
+        .iOS(.v18),
+        .tvOS(.v18),
+        .watchOS(.v11),
+        .visionOS(.v2)
     ],
     products: [
         .library(
             name: "Principle",
             targets: ["Principle"]
+        ),
+        .library(
+            name: "PrincipleConcurrency",
+            targets: ["PrincipleConcurrency"]
+        ),
+        .library(
+            name: "PrincipleCollections",
+            targets: ["PrincipleCollections"]
         )
     ],
     targets: [
         .target(
-            name: "Principle"
+            name: "Principle",
+            dependencies: [
+                "PrincipleCollections",
+                "PrincipleConcurrency"
+            ]
+        ),
+
+        .target(
+            name: "PrincipleConcurrency"
         ),
         .testTarget(
-            name: "PrincipleTests",
-            dependencies: ["Principle"]
+            name: "PrincipleConcurrencyTests",
+            dependencies: ["PrincipleConcurrency"]
+        ),
+
+        .target(
+            name: "PrincipleCollections"
+        ),
+        .testTarget(
+            name: "PrincipleCollectionsTests",
+            dependencies: ["PrincipleCollections"]
         )
     ]
 )
