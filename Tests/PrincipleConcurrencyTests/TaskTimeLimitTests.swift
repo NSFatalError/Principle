@@ -23,31 +23,27 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testThrowingOperation() async throws {
-            try await withKnownIssue {
+        func testThrowingOperation() async {
+            await #expect(throws: CustomError.self) {
                 try await withDeadline(until: .now + .seconds(1)) {
                     try await Task.sleep(for: .microseconds(1))
                     throw CustomError()
                 }
-            } matching: { issue in
-                issue.error is CustomError
             }
         }
 
         @Test
-        func testExpiredOperation() async throws {
-            try await withKnownIssue {
+        func testExpiredOperation() async {
+            await #expect(throws: DeadlineExceededError.self) {
                 try await withDeadline(until: .now + .microseconds(1)) {
                     try await Task.sleep(for: .seconds(1))
                 }
-            } matching: { issue in
-                issue.error is DeadlineExceededError
             }
         }
 
         @Test
-        func testCancelledOperation() async throws {
-            try await withKnownIssue {
+        func testCancelledOperation() async {
+            await #expect(throws: CancellationError.self) {
                 let task = Task {
                     try await withDeadline(until: .now + .seconds(1)) {
                         try await Task.sleep(for: .seconds(1))
@@ -56,8 +52,6 @@ internal struct TaskTimeLimitTests {
                 try await Task.sleep(for: .microseconds(1))
                 task.cancel()
                 try await task.value
-            } matching: { issue in
-                issue.error is CancellationError
             }
         }
     }
@@ -74,31 +68,27 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testThrowingOperation() async throws {
-            try await withKnownIssue {
+        func testThrowingOperation() async {
+            await #expect(throws: CustomError.self) {
                 try await withTimeout(.seconds(1)) {
                     try await Task.sleep(for: .microseconds(1))
                     throw CustomError()
                 }
-            } matching: { issue in
-                issue.error is CustomError
             }
         }
 
         @Test
-        func testTimedOutOperation() async throws {
-            try await withKnownIssue {
+        func testTimedOutOperation() async {
+            await #expect(throws: TimeoutError.self) {
                 try await withTimeout(.microseconds(1)) {
                     try await Task.sleep(for: .seconds(1))
                 }
-            } matching: { issue in
-                issue.error is TimeoutError
             }
         }
 
         @Test
-        func testCancelledOperation() async throws {
-            try await withKnownIssue {
+        func testCancelledOperation() async {
+            await #expect(throws: CancellationError.self) {
                 let task = Task {
                     try await withTimeout(.seconds(1)) {
                         try await Task.sleep(for: .seconds(1))
@@ -107,8 +97,6 @@ internal struct TaskTimeLimitTests {
                 try await Task.sleep(for: .microseconds(1))
                 task.cancel()
                 try await task.value
-            } matching: { issue in
-                issue.error is CancellationError
             }
         }
     }

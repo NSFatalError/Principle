@@ -8,7 +8,8 @@ jobs:
   prepare:
     runs-on: macos-15
     outputs:
-      platforms: ${{ steps.extract.outputs.platforms }}
+      platforms: ${{ steps.platforms.outputs.platforms }}
+      scheme: ${{ steps.scheme.outputs.scheme }}
     steps:
     - uses: actions/checkout@v4
     - name: Setup Xcode
@@ -24,14 +25,30 @@ jobs:
       run: mise lint
 
     - name: Extract platforms
-      id: extract
+      id: platforms
       run: |
         platforms=$(swift package dump-package | jq -r '[.platforms[].platformName] | unique | @json')
         echo "Platforms: $platforms"
         echo "platforms=$platforms" >> $GITHUB_OUTPUT
-    - name: Print info
-      if: false
-      run: xcodebuild -list
+
+    - name: Extract scheme
+      id: scheme
+      run: |
+        repo=$(basename $GITHUB_REPOSITORY)
+        schemes=$(xcodebuild -list)
+        echo "$schemes"
+
+        if echo "$schemes" | grep -q "$repo-Package"; then
+          scheme="$repo-Package"
+        elif echo "$schemes" | grep -q "$repo"; then
+          scheme="$repo"
+        else
+          echo "Unable to select a scheme"
+          exit 1
+        fi
+
+        echo "Selected scheme: $scheme"
+        echo "scheme=$scheme" >> $GITHUB_OUTPUT
 
   build-and-test:
     needs: prepare
@@ -78,18 +95,22 @@ jobs:
     - name: Build (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
-        repo=$(basename $GITHUB_REPOSITORY)
+        set -o pipefail
         xcodebuild build \
-          -scheme $repo-Package \
-          -destination "${{ steps.destination.outputs.destination }}"
+          -scheme ${{ needs.prepare.outputs.scheme }} \
+          -destination "${{ steps.destination.outputs.destination }}" | \
+          xcbeautify --renderer github-actions
 
     - name: Test (SPM)
       if: ${{ matrix.platform == 'macos' }}
-      run: swift test
+      run: |
+        set -o pipefail
+        swift test | xcbeautify --renderer github-actions
     - name: Test (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
-        repo=$(basename $GITHUB_REPOSITORY)
+        set -o pipefail
         xcodebuild test \
-          -scheme $repo-Package \
-          -destination "${{ steps.destination.outputs.destination }}"
+          -scheme ${{ needs.prepare.outputs.scheme }} \
+          -destination "${{ steps.destination.outputs.destination }}" | \
+          xcbeautify --renderer github-actions
