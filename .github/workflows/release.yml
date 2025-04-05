@@ -30,6 +30,6 @@ jobs:
 
           if [ "$current_major" -gt "$previous_major" ]; then
             swift package diagnose-api-breaking-changes "$previous_tag"
-          else 
+          else
             swift package diagnose-api-breaking-changes "$previous_tag" 2>/dev/null
           fi
