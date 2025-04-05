@@ -32,7 +32,7 @@ jobs:
     - name: Print info
       if: false
       run: xcodebuild -list
-  
+
   build-and-test:
     needs: prepare
     runs-on: macos-15
