@@ -22,12 +22,15 @@ jobs:
 
       - name: Verify changes
         run: |
+          git fetch --prune --unshallow
+          git fetch --tags
+
           current_tag=${GITHUB_REF#refs/tags/}
           previous_tag=$(git tag --sort=-v:refname | head -n 3 | tail -n 1)
+
           current_major=$(echo "$current_tag" | cut -d '.' -f 1)
           previous_major=$(echo "$previous_tag" | cut -d '.' -f 1)
           echo "Comparing $current_tag with $previous_tag..."
-          echo $(git tag --sort=-v:refname)
 
           if [ "$current_major" -gt "$previous_major" ]; then
             swift package diagnose-api-breaking-changes "$previous_tag"
