@@ -27,9 +27,9 @@ jobs:
           echo "Comparing $current_tag with $previous_tag..."
 
           if [ "$current_major" -gt "$previous_major" ]; then
-            swift package diagnose-api-breaking-changes "$previous_tag"
+            swift package diagnose-api-breaking-changes "$previous_tag" || true
           else
-            swift package diagnose-api-breaking-changes "$previous_tag" 2>/dev/null
+            swift package diagnose-api-breaking-changes "$previous_tag"
           fi
 
       - name: Draft release
