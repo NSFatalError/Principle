@@ -88,9 +88,9 @@ internal struct TaskTimeLimitTests {
         @Test
         func testTimedOutOperation() async throws {
 //            try await withKnownIssue {
-                try await withTimeout(.microseconds(1)) {
-                    try await Task.sleep(for: .seconds(1))
-                }
+            try await withTimeout(.microseconds(1)) {
+                try await Task.sleep(for: .seconds(1))
+            }
 //            } matching: { issue in
 //                issue.error is TimeoutError
 //            }
