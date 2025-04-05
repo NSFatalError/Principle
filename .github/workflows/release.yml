@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
       - name: Draft release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -22,11 +25,8 @@ jobs:
 
       - name: Verify changes
         run: |
-          git fetch --tags
-          echo $(git tag --sort=-v:refname)
-          
           current_tag=${GITHUB_REF#refs/tags/}
-          previous_tag=$(git tag --sort=-v:refname | head -n 3 | tail -n 1)
+          previous_tag=$(git tag --sort=-v:refname | head -n 2 | tail -n 1)
 
           current_major=$(echo "$current_tag" | cut -d '.' -f 1)
           previous_major=$(echo "$previous_tag" | cut -d '.' -f 1)
