@@ -8,13 +8,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - uses: swift-actions/setup-swift@v2
+      with:
+        swift-version: "6.1"
+
     - name: Setup
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         curl https://mise.run | sh
         mise install
-        sudo xcode-select -s /Applications/Xcode_16.3.app
 
     - name: Lint
       run: mise lint
