@@ -9,12 +9,27 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Draft release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
-          gh release create "$TAG_NAME" \
+          current_tag=${GITHUB_REF#refs/tags/}
+          gh release create "$current_tag" \
             --repo="$GITHUB_REPOSITORY" \
             --generate-notes \
             --draft
+
+      - name: Verify changes
+        run: |
+          current_tag=${GITHUB_REF#refs/tags/}
+          previous_tag=$(git tag --sort=-v:refname | head -n 2 | tail -n 1)
+          current_major=$(echo "$current_tag" | cut -d '.' -f 1)
+          previous_major=$(echo "$previous_tag" | cut -d '.' -f 1)
+          echo "Comparing $current_tag with $previous_tag..."
+
+          if [ "$current_major" -gt "$previous_major" ]; then
+            swift package diagnose-api-breaking-changes "$previous_tag"
+          else 
+            swift package diagnose-api-breaking-changes "$previous_tag" 2>/dev/null
+          fi

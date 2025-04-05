@@ -91,20 +91,22 @@ jobs:
 
     - name: Build (SPM)
       if: ${{ matrix.platform == 'macos' }}
-      run: swift build
+      run: swift build | xcbeautify --renderer github-actions
     - name: Build (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
         xcodebuild build \
           -scheme ${{ needs.prepare.outputs.scheme }} \
-          -destination "${{ steps.destination.outputs.destination }}"
+          -destination "${{ steps.destination.outputs.destination }}" | \
+          xcbeautify --renderer github-actions
 
     - name: Test (SPM)
       if: ${{ matrix.platform == 'macos' }}
-      run: swift test
+      run: swift test | xcbeautify --renderer github-actions
     - name: Test (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
         xcodebuild test \
           -scheme ${{ needs.prepare.outputs.scheme }} \
-          -destination "${{ steps.destination.outputs.destination }}"
+          -destination "${{ steps.destination.outputs.destination }}" | \
+          xcbeautify --renderer github-actions
