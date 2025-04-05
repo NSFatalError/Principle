@@ -22,9 +22,9 @@ jobs:
 
       - name: Verify changes
         run: |
-          git fetch --prune --unshallow
           git fetch --tags
-
+          echo $(git tag --sort=-v:refname)
+          
           current_tag=${GITHUB_REF#refs/tags/}
           previous_tag=$(git tag --sort=-v:refname | head -n 3 | tail -n 1)
 
