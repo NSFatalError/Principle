@@ -63,8 +63,8 @@ public func withTimeout<C: Clock, Success: Sendable>(
 public func withTimeout<Success: Sendable>(
     _ duration: Duration,
     tolerance: Duration? = nil,
-    priority: TaskPriority? = nil,
     isolation: isolated (any Actor)? = #isolation,
+    priority: TaskPriority? = nil,
     @_inheritActorContext @_implicitSelfCapture operation: sending @escaping @isolated(any) () async throws -> Success
 ) async throws -> Success {
     try await withTimeout(
