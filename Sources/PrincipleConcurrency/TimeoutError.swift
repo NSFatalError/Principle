@@ -31,8 +31,8 @@ public func withTimeout<C: Clock, Success: Sendable>(
     _ duration: C.Instant.Duration,
     tolerance: C.Instant.Duration? = nil,
     clock: C,
-    priority: TaskPriority? = nil,
     isolation: isolated (any Actor)? = #isolation,
+    priority: TaskPriority? = nil,
     @_inheritActorContext @_implicitSelfCapture operation: sending @escaping @isolated(any) () async throws -> Success
 ) async throws -> Success {
     try await withTimeLimit(
@@ -71,8 +71,8 @@ public func withTimeout<Success: Sendable>(
         duration,
         tolerance: tolerance,
         clock: .continuous,
-        priority: priority,
         isolation: isolation,
+        priority: priority,
         operation: operation
     )
 }
