@@ -1,17 +1,21 @@
 name: Release
-
 on:
   push:
     tags:
       - '*'
 
+env:
+  XCODE_VERSION: "16.3"
+
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Setup Xcode
+        run: sudo xcode-select -s /Applications/Xcode_$XCODE_VERSION.app
 
       - name: Draft release
         env:
