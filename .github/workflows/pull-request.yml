@@ -30,6 +30,7 @@ jobs:
         echo "Platforms: $platforms"
         echo "platforms=$platforms" >> $GITHUB_OUTPUT
     - name: Print info
+      if: false
       run: xcodebuild -list
   
   build-and-test:
@@ -80,8 +81,7 @@ jobs:
         repo=$(basename $GITHUB_REPOSITORY)
         xcodebuild build \
           -scheme $repo-Package \
-          -destination "${{ steps.destination.outputs.destination }}" \
-          -quiet
+          -destination "${{ steps.destination.outputs.destination }}"
 
     - name: Test (SPM)
       if: ${{ matrix.platform == 'macos' }}
@@ -92,5 +92,4 @@ jobs:
         repo=$(basename $GITHUB_REPOSITORY)
         xcodebuild test \
           -scheme $repo-Package \
-          -destination "${{ steps.destination.outputs.destination }}" \
-          -quiet
+          -destination "${{ steps.destination.outputs.destination }}"
