@@ -2,7 +2,7 @@
 
 ![Swift](https://img.shields.io/badge/Swift-6.0-EF5239?logo=swift&labelColor=white)
 
-Essential tools that extend the capabilities of Swift Standard Library types.
+Essential tools that extend the capabilities of Swift Standard Library.
 
 #### Contents
 - [PrincipleConcurrency](#principleconcurrency)
