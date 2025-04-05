@@ -8,10 +8,13 @@ jobs:
       platforms: ${{ steps.extract.outputs.platforms }}
     steps:
     - uses: actions/checkout@v4
-    - name: Install Swift
-      uses: slashmo/install-swift@main
-      with:
-        version: 6.1
+    - name: Update Swift
+      run: |
+        curl -O https://download.swift.org/swiftly/darwin/swiftly.pkg && \
+          installer -pkg swiftly.pkg -target CurrentUserHomeDirectory && \
+          ~/.swiftly/bin/swiftly init --quiet-shell-followup && \
+          . ~/.swiftly/env.sh && \
+          hash -r 
     - name: Setup mise
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
