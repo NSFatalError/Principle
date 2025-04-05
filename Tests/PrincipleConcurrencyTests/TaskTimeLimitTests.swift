@@ -79,7 +79,7 @@ internal struct TaskTimeLimitTests {
 
         @Test
         func testTimedOutOperation() async {
-            await #expect(throws: DeadlineExceededError.self) {
+            await #expect(throws: TimeoutError.self) {
                 try await withTimeout(.microseconds(1)) {
                     try await Task.sleep(for: .seconds(1))
                 }
