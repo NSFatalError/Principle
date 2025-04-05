@@ -75,7 +75,7 @@ jobs:
       if: ${{ matrix.platform != 'macos' }}
       run: |
         xcodebuild build \
-          -scheme Package \
+          -scheme $GITHUB_REPOSITORY-Package \
           -destination "${{ steps.destination.outputs.destination }}" \
           | xcbeautify
 
@@ -86,6 +86,6 @@ jobs:
       if: ${{ matrix.platform != 'macos' }}
       run: |
         xcodebuild test \
-          -scheme Package \
+          -scheme $GITHUB_REPOSITORY-Package \
           -destination "${{ steps.destination.outputs.destination }}" \
           | xcbeautify
