@@ -78,7 +78,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testTimedOutOperation() async throws {
+        func testTimedOutOperation() async {
             await #expect(throws: DeadlineExceededError.self) {
                 try await withTimeout(.microseconds(1)) {
                     try await Task.sleep(for: .seconds(1))
@@ -87,7 +87,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testCancelledOperation() async throws {
+        func testCancelledOperation() async {
             await #expect(throws: CancellationError.self) {
                 let task = Task {
                     try await withTimeout(.seconds(1)) {
