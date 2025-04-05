@@ -29,6 +29,8 @@ jobs:
         platforms=$(swift package dump-package | jq -r '[.platforms[].platformName] | unique | @json')
         echo "Platforms: $platforms"
         echo "platforms=$platforms" >> $GITHUB_OUTPUT
+    - name: Print info
+        xcodebuild -list
   
   build-and-test:
     needs: prepare
@@ -41,6 +43,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Setup Xcode
       run: sudo xcode-select -s /Applications/Xcode_$XCODE_VERSION.app
+      
     - name: Map destinations
       if: ${{ matrix.platform != 'macos' }}
       id: destination
