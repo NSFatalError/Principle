@@ -39,6 +39,8 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
 
             group.addTask(priority: priority) {
                 do {
+                    // Review after closure isolation control gets implemented
+                    // https://forums.swift.org/t/closure-isolation-control/70378
                     let success = try await transfer.finalize()()
                     return .taskFinished(.success(success))
                 } catch {
