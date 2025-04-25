@@ -9,11 +9,9 @@
 //  Copyright © 2024 Philipp Gabriel. Original code licensed under MIT.
 //
 
-internal enum TaskTimeLimit<Success: Sendable> {
+private enum TaskTimeLimit<Success: Sendable> {
 
-    typealias Operation = @isolated(any) () async throws -> Success
-
-    fileprivate enum Event {
+    enum Event {
 
         case taskFinished(Result<Success, any Error>)
         case parentTaskCancelled
@@ -28,7 +26,7 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
     clock: C,
     priority: TaskPriority?,
     isolation callerIsolation: isolated (any Actor)?,
-    operation: sending @escaping TaskTimeLimit<Success>.Operation
+    operation: sending @escaping () async throws -> Success
 ) async throws -> Success {
     var transfer = SingleUseTransfer(operation)
 
@@ -37,6 +35,8 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
         returning: Result<Success, any Error>.self,
         isolation: callerIsolation,
         body: { group in
+            var transfer = transfer.take()
+
             group.addTask(priority: priority) {
                 do {
                     try await Task.sleep(until: deadline, tolerance: tolerance, clock: clock)
@@ -46,27 +46,17 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
                 }
             }
 
-            do {
-                nonisolated(unsafe) var unsafeGroup = group
-                defer { group = consume unsafeGroup }
-
-                await unpackOperation(
-                    transfer.finalize(),
-                    callerIsolation: callerIsolation,
-                    transform: { operation, operationIsolation in
-                        unsafeGroup.addTask(priority: priority) {
-                            do {
-                                // NOTE: #isolation != operationIsolation
-                                // https://forums.swift.org/t/explicitly-captured-isolated-parameter-does-not-change-isolation-of-sendable-sending-closures/79502
-                                _ = operationIsolation
-                                let success = try await operation()
-                                return .taskFinished(.success(success))
-                            } catch {
-                                return .taskFinished(.failure(error))
-                            }
-                        }
-                    }
-                )
+            group.addTask(priority: priority) {
+                do {
+                    // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0461-async-function-isolation.md
+                    // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0472-task-start-synchronously-on-caller-context.md
+                    // https://forums.swift.org/t/explicitly-captured-isolated-parameter-does-not-change-isolation-of-sendable-sending-closures/79502
+                    // https://forums.swift.org/t/closure-isolation-control/70378
+                    let success = try await transfer.finalize()()
+                    return .taskFinished(.success(success))
+                } catch {
+                    return .taskFinished(.failure(error))
+                }
             }
 
             defer {
@@ -89,15 +79,4 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
     )
 
     return try result.get()
-}
-
-private func unpackOperation<Success: Sendable, R>(
-    _ operation: sending @escaping TaskTimeLimit<Success>.Operation,
-    callerIsolation _: isolated (any Actor)?,
-    transform: (sending @escaping TaskTimeLimit<Success>.Operation, isolated(any Actor)?) -> sending R
-) async -> sending R {
-    // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0461-async-function-isolation.md
-    // https://forums.swift.org/t/closure-isolation-control/70378
-    let operationIsolation = extractIsolation(operation)
-    return await transform(operation, operationIsolation)
 }

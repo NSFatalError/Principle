@@ -33,7 +33,7 @@ public func withTimeout<C: Clock, Success: Sendable>(
     clock: C,
     priority: TaskPriority? = nil,
     isolation: isolated (any Actor)? = #isolation,
-    @_inheritActorContext @_implicitSelfCapture operation: sending @escaping @isolated(any) () async throws -> Success
+    @_inheritActorContext @_implicitSelfCapture operation: sending @escaping () async throws -> Success
 ) async throws -> Success {
     try await withTimeLimit(
         throwing: TimeoutError(),
@@ -65,7 +65,7 @@ public func withTimeout<Success: Sendable>(
     tolerance: Duration? = nil,
     priority: TaskPriority? = nil,
     isolation: isolated (any Actor)? = #isolation,
-    @_inheritActorContext @_implicitSelfCapture operation: sending @escaping @isolated(any) () async throws -> Success
+    @_inheritActorContext @_implicitSelfCapture operation: sending @escaping () async throws -> Success
 ) async throws -> Success {
     try await withTimeout(
         duration,
