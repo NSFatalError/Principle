@@ -39,15 +39,6 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
 
             group.addTask(priority: priority) {
                 do {
-                    try await Task.sleep(until: deadline, tolerance: tolerance, clock: clock)
-                    return .timeLimitExceeded
-                } catch {
-                    return .parentTaskCancelled
-                }
-            }
-
-            group.addTask(priority: priority) {
-                do {
                     // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0461-async-function-isolation.md
                     // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0472-task-start-synchronously-on-caller-context.md
                     // https://forums.swift.org/t/explicitly-captured-isolated-parameter-does-not-change-isolation-of-sendable-sending-closures/79502
@@ -56,6 +47,15 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
                     return .taskFinished(.success(success))
                 } catch {
                     return .taskFinished(.failure(error))
+                }
+            }
+
+            group.addTask(priority: priority) {
+                do {
+                    try await Task.sleep(until: deadline, tolerance: tolerance, clock: clock)
+                    return .timeLimitExceeded
+                } catch {
+                    return .parentTaskCancelled
                 }
             }
 
