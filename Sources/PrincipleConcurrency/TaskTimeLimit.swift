@@ -9,9 +9,11 @@
 //  Copyright © 2024 Philipp Gabriel. Original code licensed under MIT.
 //
 
-private enum TaskTimeLimit {
+internal enum TaskTimeLimit<Success: Sendable> {
 
-    enum Event<Success: Sendable> {
+    typealias Operation = @isolated(any) () async throws -> Success
+
+    fileprivate enum Event {
 
         case taskFinished(Result<Success, any Error>)
         case parentTaskCancelled
@@ -25,29 +27,16 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
     tolerance: C.Instant.Duration?,
     clock: C,
     priority: TaskPriority?,
-    isolation: isolated (any Actor)?,
-    operation: sending @escaping @isolated(any) () async throws -> Success
+    isolation callerIsolation: isolated (any Actor)?,
+    operation: sending @escaping TaskTimeLimit<Success>.Operation
 ) async throws -> Success {
     var transfer = SingleUseTransfer(operation)
 
     let result = await withTaskGroup(
-        of: TaskTimeLimit.Event<Success>.self,
+        of: TaskTimeLimit<Success>.Event.self,
         returning: Result<Success, any Error>.self,
-        isolation: isolation,
+        isolation: callerIsolation,
         body: { group in
-            var transfer = transfer.take()
-
-            group.addTask(priority: priority) {
-                do {
-                    // Review after closure isolation control gets implemented
-                    // https://forums.swift.org/t/closure-isolation-control/70378
-                    let success = try await transfer.finalize()()
-                    return .taskFinished(.success(success))
-                } catch {
-                    return .taskFinished(.failure(error))
-                }
-            }
-
             group.addTask(priority: priority) {
                 do {
                     try await Task.sleep(until: deadline, tolerance: tolerance, clock: clock)
@@ -55,6 +44,27 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
                 } catch {
                     return .parentTaskCancelled
                 }
+            }
+
+            do {
+                nonisolated(unsafe) var unsafeGroup = group
+                defer { group = consume unsafeGroup }
+
+                await unpackOperation(
+                    transfer.finalize(),
+                    callerIsolation: callerIsolation,
+                    transform: { operation, operationIsolation in
+                        unsafeGroup.addTask(priority: priority) {
+                            do {
+                                _ = operationIsolation
+                                let success = try await operation()
+                                return .taskFinished(.success(success))
+                            } catch {
+                                return .taskFinished(.failure(error))
+                            }
+                        }
+                    }
+                )
             }
 
             defer {
@@ -77,4 +87,19 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
     )
 
     return try result.get()
+}
+
+private func unpackOperation<Success: Sendable, R>(
+    _ operation: sending @escaping TaskTimeLimit<Success>.Operation,
+    callerIsolation _: isolated (any Actor)?,
+    transform: (sending @escaping TaskTimeLimit<Success>.Operation, isolated (any Actor)?) -> sending R
+) async -> sending R {
+    // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0461-async-function-isolation.md
+    // https://forums.swift.org/t/closure-isolation-control/70378
+
+    // Currently operationIsolation does not affect actual isolation of child task.
+    // https://forums.swift.org/t/explicitly-captured-isolated-parameter-does-not-change-isolation-of-sendable-sending-closures/79502
+    let operationIsolation = extractIsolation(operation)
+
+    return await transform(operation, operationIsolation)
 }
