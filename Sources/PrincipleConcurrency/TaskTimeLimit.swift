@@ -25,7 +25,7 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
     tolerance: C.Instant.Duration?,
     clock: C,
     priority: TaskPriority?,
-    isolation callerIsolation: isolated (any Actor)?,
+    isolation: isolated (any Actor)?,
     operation: sending @escaping () async throws -> Success
 ) async throws -> Success {
     var transfer = SingleUseTransfer(operation)
@@ -33,7 +33,7 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
     let result = await withTaskGroup(
         of: TaskTimeLimit<Success>.Event.self,
         returning: Result<Success, any Error>.self,
-        isolation: callerIsolation,
+        isolation: isolation,
         body: { group in
             var transfer = transfer.take()
 
