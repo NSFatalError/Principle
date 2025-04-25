@@ -54,6 +54,16 @@ internal struct TaskTimeLimitTests {
                 try await task.value
             }
         }
+
+        @Test
+        func testIsolation() async throws {
+            let task = Task { @CustomActor in
+                try await withDeadline(until: .now + .seconds(1)) {
+                    CustomActor.shared.assertIsolated()
+                }
+            }
+            try await task.value
+        }
     }
 
     struct Timeout {
@@ -98,6 +108,16 @@ internal struct TaskTimeLimitTests {
                 task.cancel()
                 try await task.value
             }
+        }
+
+        @Test
+        func testIsolation() async throws {
+            let task = Task { @CustomActor in
+                try await withTimeout(.seconds(1)) {
+                    CustomActor.shared.assertIsolated()
+                }
+            }
+            try await task.value
         }
     }
 }
