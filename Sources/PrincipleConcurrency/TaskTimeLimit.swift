@@ -56,6 +56,8 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
                     transform: { operation, operationIsolation in
                         unsafeGroup.addTask(priority: priority) {
                             do {
+                                // NOTE: #isolation != operationIsolation
+                                // https://forums.swift.org/t/explicitly-captured-isolated-parameter-does-not-change-isolation-of-sendable-sending-closures/79502
                                 _ = operationIsolation
                                 let success = try await operation()
                                 return .taskFinished(.success(success))
@@ -96,10 +98,6 @@ private func unpackOperation<Success: Sendable, R>(
 ) async -> sending R {
     // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0461-async-function-isolation.md
     // https://forums.swift.org/t/closure-isolation-control/70378
-
-    // Currently operationIsolation does not affect actual isolation of child task.
-    // https://forums.swift.org/t/explicitly-captured-isolated-parameter-does-not-change-isolation-of-sendable-sending-closures/79502
     let operationIsolation = extractIsolation(operation)
-
     return await transform(operation, operationIsolation)
 }
