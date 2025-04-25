@@ -92,7 +92,7 @@ internal func withTimeLimit<C: Clock, Success: Sendable>( // swiftlint:disable:t
 private func unpackOperation<Success: Sendable, R>(
     _ operation: sending @escaping TaskTimeLimit<Success>.Operation,
     callerIsolation _: isolated (any Actor)?,
-    transform: (sending @escaping TaskTimeLimit<Success>.Operation, isolated (any Actor)?) -> sending R
+    transform: (sending @escaping TaskTimeLimit<Success>.Operation, isolated(any Actor)?) -> sending R
 ) async -> sending R {
     // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0461-async-function-isolation.md
     // https://forums.swift.org/t/closure-isolation-control/70378
