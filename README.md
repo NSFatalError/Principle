@@ -1,6 +1,7 @@
 # Principle
 
 ![Swift](https://img.shields.io/badge/Swift-6.0-EF5239?logo=swift&labelColor=white)
+[![Codecov](https://codecov.io/gh/NSFatalError/Principle/graph/badge.svg?token=ITK16CK7NL)](https://codecov.io/gh/NSFatalError/Principle)
 
 Essential tools that extend the capabilities of Swift Standard Library.
 
