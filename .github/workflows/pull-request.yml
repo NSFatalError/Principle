@@ -115,6 +115,9 @@ jobs:
           -destination "${{ steps.destination.outputs.destination }}" | \
           xcbeautify --renderer github-actions
       
-    - name: Check coverage
+    - name: Check coverage (SPM)
       if: ${{ matrix.platform == 'macos' }}
       uses: codecov/codecov-action@v5
+      with:
+        files: .build/debug/codecov/*.profraw
+        fail_ci_if_error: true
