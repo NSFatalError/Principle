@@ -16,7 +16,7 @@ internal struct TaskTimeLimitTests {
         @Test
         func testSuccessfulOperation() async throws {
             let result = try await withDeadline(until: .now + .seconds(1)) {
-                try await Task.sleep(for: .microseconds(13))
+                try await Task.sleep(for: .microseconds(1))
                 return true
             }
             #expect(result)
