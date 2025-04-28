@@ -3,7 +3,7 @@ name: Pull request
 on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]  
-  
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -99,6 +99,7 @@ jobs:
     - name: Build (SPM)
       if: ${{ matrix.platform == 'macos' }}
       run: swift build
+
     - name: Build (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
@@ -113,8 +114,15 @@ jobs:
       run: |
         set -o pipefail
         swift test --enable-code-coverage | xcbeautify --renderer github-actions
-        xcrun llvm-cov report $BUILD_FOLDER -instr-profile $PROFDATA_FOLDER
-        xcrun llvm-cov export -format="lcov" $BUILD_FOLDER -instr-profile $PROFDATA_FOLDER > $LCOV_PATH
+        TEST_BUNDLE=$(find .build/debug -name "*.xctest" | head -n 1)
+        TEST_EXECUTABLE="$TEST_BUNDLE/Contents/MacOS/$(basename "$TEST_BUNDLE" .xctest)"
+        llvm-profdata merge -sparse .build/debug/codecov/*.profraw \
+          -o coverage.profdata
+        llvm-cov export \
+          "$TEST_EXECUTABLE" \
+          -instr-profile=coverage.profdata \
+          -format=lcov > coverage/lcov.info
+
     - name: Test (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
@@ -123,7 +131,7 @@ jobs:
           -scheme ${{ needs.prepare.outputs.scheme }} \
           -destination "${{ steps.destination.outputs.destination }}" | \
           xcbeautify --renderer github-actions
-      
+
     - name: Check coverage (SPM)
       if: ${{ matrix.platform == 'macos' }}
       uses: codecov/codecov-action@v5
