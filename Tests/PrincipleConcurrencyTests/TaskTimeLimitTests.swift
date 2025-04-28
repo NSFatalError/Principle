@@ -112,12 +112,12 @@ internal struct TaskTimeLimitTests {
 
         @Test
         func testIsolation() async throws {
-//            let task = Task { @CustomActor in
-//                try await withTimeout(.seconds(1)) {
-//                    CustomActor.shared.assertIsolated()
-//                }
-//            }
-//            try await task.value
+            let task = Task { @CustomActor in
+                try await withTimeout(.seconds(1)) {
+                    CustomActor.shared.assertIsolated()
+                }
+            }
+            try await task.value
         }
     }
 }
