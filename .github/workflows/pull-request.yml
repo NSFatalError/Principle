@@ -1,5 +1,12 @@
 name: Pull request
-on: pull_request
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]  
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   XCODE_VERSION: "16.3"
@@ -119,5 +126,4 @@ jobs:
       if: ${{ matrix.platform == 'macos' }}
       uses: codecov/codecov-action@v5
       with:
-        files: .build/debug/codecov/*.profraw
         fail_ci_if_error: true
