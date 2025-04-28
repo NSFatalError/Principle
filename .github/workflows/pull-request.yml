@@ -114,15 +114,11 @@ jobs:
       run: |
         set -o pipefail
         swift test --enable-code-coverage | xcbeautify --renderer github-actions
-        TEST_BUNDLE=$(find .build/debug -name "*.xctest" | head -n 1)
+        TEST_BUNDLE=$(find .build/debug/ -name "*.xctest" | head -n 1)
         TEST_EXECUTABLE="$TEST_BUNDLE/Contents/MacOS/$(basename "$TEST_BUNDLE" .xctest)"
-        xcrun llvm-profdata merge -sparse \
-          .build/debug/codecov/*.profraw \
-          -o coverage.profdata
-        xcrun llvm-cov export \
-          "$TEST_EXECUTABLE" \
-          -instr-profile=coverage.profdata \
-          -format=lcov > coverage/lcov.info
+        xcrun llvm-cov export -format="lcov" \
+          -instr-profile .build/debug/codecov/default.profdata \
+          "$TEST_EXECUTABLE" > info.lcov
 
     - name: Test (Xcode)
       if: ${{ matrix.platform != 'macos' }}
