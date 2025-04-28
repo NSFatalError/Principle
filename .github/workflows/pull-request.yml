@@ -116,9 +116,10 @@ jobs:
         swift test --enable-code-coverage | xcbeautify --renderer github-actions
         TEST_BUNDLE=$(find .build/debug -name "*.xctest" | head -n 1)
         TEST_EXECUTABLE="$TEST_BUNDLE/Contents/MacOS/$(basename "$TEST_BUNDLE" .xctest)"
-        llvm-profdata merge -sparse .build/debug/codecov/*.profraw \
+        xcrun llvm-profdata merge -sparse \
+          .build/debug/codecov/*.profraw \
           -o coverage.profdata
-        llvm-cov export \
+        xcrun llvm-cov export \
           "$TEST_EXECUTABLE" \
           -instr-profile=coverage.profdata \
           -format=lcov > coverage/lcov.info
