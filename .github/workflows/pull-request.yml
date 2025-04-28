@@ -105,7 +105,7 @@ jobs:
       if: ${{ matrix.platform == 'macos' }}
       run: |
         set -o pipefail
-        swift test | xcbeautify --renderer github-actions
+        swift test --enable-code-coverage | xcbeautify --renderer github-actions
     - name: Test (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
@@ -114,3 +114,7 @@ jobs:
           -scheme ${{ needs.prepare.outputs.scheme }} \
           -destination "${{ steps.destination.outputs.destination }}" | \
           xcbeautify --renderer github-actions
+      
+    - name: Check coverage
+      if: ${{ matrix.platform == 'macos' }}
+      uses: codecov/codecov-action@v5
