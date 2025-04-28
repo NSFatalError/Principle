@@ -113,6 +113,8 @@ jobs:
       run: |
         set -o pipefail
         swift test --enable-code-coverage | xcbeautify --renderer github-actions
+        xcrun llvm-cov report $BUILD_FOLDER -instr-profile $PROFDATA_FOLDER
+        xcrun llvm-cov export -format="lcov" $BUILD_FOLDER -instr-profile $PROFDATA_FOLDER > $LCOV_PATH
     - name: Test (Xcode)
       if: ${{ matrix.platform != 'macos' }}
       run: |
