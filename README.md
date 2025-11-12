@@ -14,7 +14,9 @@ Essential tools that extend the capabilities of Swift Standard Library.
 
 `PrincipleConcurrency` introduces `SingleUseTransfer` - an important utility that allows to safely capture `sending` values in closures where the compiler would otherwise prohibit it.
 
-Since Swift currently lacks a built-in annotation to indicate that a closure is guaranteed to be invoked at most once, the compiler may reject code that programmers can prove to be safe. `SingleUseTransfer` shifts the responsibility of ensuring single invocation to the developer while preserving all the benefits of strict concurrency checking — without resorting to tempting workarounds like `@unchecked` or `nonisolated(unsafe)`:
+Since Swift currently lacks a built-in annotation to indicate that a closure is guaranteed to be invoked at most once, the compiler may reject code that programmers can prove to be safe. 
+`SingleUseTransfer` shifts the responsibility of ensuring single invocation to the developer while preserving all the benefits of strict concurrency checking - without resorting 
+to tempting workarounds like `@unchecked` or `nonisolated(unsafe)`:
 
 ```swift
 let mutex = Mutex(NonSendable())

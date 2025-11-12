@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -57,6 +57,8 @@ let package = Package(
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .swiftLanguageMode(.v6),
-        .enableUpcomingFeature("ExistentialAny")
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault")
     ]
 }
