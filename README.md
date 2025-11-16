@@ -1,6 +1,7 @@
 # Principle
 
-![Swift](https://img.shields.io/badge/Swift-6.0-EF5239?logo=swift&labelColor=white)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FNSFatalError%2FPrinciple%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/NSFatalError/Principle)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FNSFatalError%2FPrinciple%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/NSFatalError/Principle)
 [![Codecov](https://codecov.io/gh/NSFatalError/Principle/graph/badge.svg?token=ITK16CK7NL)](https://codecov.io/gh/NSFatalError/Principle)
 
 Essential tools that extend the capabilities of Swift Standard Library.
@@ -8,6 +9,7 @@ Essential tools that extend the capabilities of Swift Standard Library.
 #### Contents
 - [PrincipleConcurrency](#principleconcurrency)
 - [PrincipleCollections](#principlecollections)
+- [Documentation](#documentation)
 - [Installation](#installation)
 
 ## PrincipleConcurrency
@@ -55,6 +57,10 @@ struct Person: Equatable {
 var people: [Person] = [...]
 people.sort(on: \.age)
 ```
+
+## Documentation
+
+[Full documentation is available on the Swift Package Index.](https://swiftpackageindex.com/NSFatalError/Principle/documentation/principle)
 
 ## Installation
 
