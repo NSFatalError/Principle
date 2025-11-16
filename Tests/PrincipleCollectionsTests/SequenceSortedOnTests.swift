@@ -18,26 +18,26 @@ internal struct SequenceSortedOnTests {
     }
 
     @Test
-    func testSequence() {
+    func sequence() {
         let sorted = shuffled.sorted(on: \.value)
         #expect(Array(range) == sorted.map(\.value))
     }
 
     @Test
-    func testReversedSequence() {
+    func reversedSequence() {
         let sorted = shuffled.sorted(on: \.value, by: >)
         #expect(Array(range).reversed() == sorted.map(\.value))
     }
 
     @Test
-    func testMutableCollection() {
+    func mutableCollection() {
         var sorted = shuffled
         sorted.sort(on: \.value)
         #expect(Array(range) == sorted.map(\.value))
     }
 
     @Test
-    func testReversedMutableCollection() {
+    func reversedMutableCollection() {
         var sorted = shuffled
         sorted.sort(on: \.value, by: >)
         #expect(Array(range).reversed() == sorted.map(\.value))

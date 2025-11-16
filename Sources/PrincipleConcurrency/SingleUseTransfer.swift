@@ -23,6 +23,7 @@
 /// let mutex = Mutex(NonSendable())
 /// let instance = NonSendable()
 /// var transfer = SingleUseTransfer(instance)
+///
 /// mutex.withLock { protected in
 ///     protected = transfer.finalize()
 /// }

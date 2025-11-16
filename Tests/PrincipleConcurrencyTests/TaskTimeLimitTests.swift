@@ -9,12 +9,12 @@
 @testable import PrincipleConcurrency
 import Testing
 
-internal struct TaskTimeLimitTests {
+internal enum TaskTimeLimitTests {
 
     struct Deadline {
 
         @Test
-        func testSuccessfulOperation() async throws {
+        func successfulOperation() async throws {
             let result = try await withDeadline(until: .now + .seconds(1)) {
                 try await Task.sleep(for: .microseconds(1))
                 return true
@@ -23,7 +23,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testThrowingOperation() async {
+        func throwingOperation() async {
             await #expect(throws: CustomError.self) {
                 try await withDeadline(until: .now + .seconds(1)) {
                     try await Task.sleep(for: .microseconds(1))
@@ -33,7 +33,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testExpiredOperation() async {
+        func expiredOperation() async {
             await #expect(throws: DeadlineExceededError.self) {
                 try await withDeadline(until: .now + .microseconds(1)) {
                     try await Task.sleep(for: .seconds(1))
@@ -42,7 +42,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testCancelledOperation() async {
+        func cancelledOperation() async {
             await #expect(throws: CancellationError.self) {
                 let task = Task {
                     try await withDeadline(until: .now + .seconds(1)) {
@@ -56,7 +56,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testIsolation() async throws {
+        func isolation() async throws {
             let task = Task { @CustomActor in
                 try await withDeadline(until: .now + .seconds(1)) {
                     CustomActor.shared.assertIsolated()
@@ -69,7 +69,7 @@ internal struct TaskTimeLimitTests {
     struct Timeout {
 
         @Test
-        func testSuccessfulOperation() async throws {
+        func successfulOperation() async throws {
             let result = try await withTimeout(.seconds(1)) {
                 try await Task.sleep(for: .microseconds(1))
                 return true
@@ -78,7 +78,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testThrowingOperation() async {
+        func throwingOperation() async {
             await #expect(throws: CustomError.self) {
                 try await withTimeout(.seconds(1)) {
                     try await Task.sleep(for: .microseconds(1))
@@ -88,7 +88,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testTimedOutOperation() async {
+        func timedOutOperation() async {
             await #expect(throws: TimeoutError.self) {
                 try await withTimeout(.microseconds(1)) {
                     try await Task.sleep(for: .seconds(1))
@@ -97,7 +97,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testCancelledOperation() async {
+        func cancelledOperation() async {
             await #expect(throws: CancellationError.self) {
                 let task = Task {
                     try await withTimeout(.seconds(1)) {
@@ -111,7 +111,7 @@ internal struct TaskTimeLimitTests {
         }
 
         @Test
-        func testIsolation() async throws {
+        func isolation() async throws {
             let task = Task { @CustomActor in
                 try await withTimeout(.seconds(1)) {
                     CustomActor.shared.assertIsolated()

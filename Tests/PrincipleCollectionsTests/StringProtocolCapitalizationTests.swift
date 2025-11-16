@@ -21,14 +21,14 @@ internal struct StringProtocolCapitalizationTests {
     private let string = "istanbul city"
 
     @Test(arguments: arguments)
-    func testStringProtocol(locale: Locale?, expectation: String) {
+    func stringProtocol(locale: Locale?, expectation: String) {
         let substring = string[...]
         let transformed = substring.uppercasingFirstCharacter(with: locale)
         #expect(transformed == expectation)
     }
 
     @Test(arguments: arguments)
-    func testMutableString(locale: Locale?, expectation: String) {
+    func mutableString(locale: Locale?, expectation: String) {
         var transformed = string
         transformed.uppercaseFirstCharacter(with: locale)
         #expect(transformed == expectation)
