@@ -12,11 +12,11 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  XCODE_VERSION: "16.3"
+  XCODE_VERSION: "26.1"
 
 jobs:
   prepare:
-    runs-on: macos-15
+    runs-on: macos-26
     outputs:
       platforms: ${{ steps.platforms.outputs.platforms }}
       scheme: ${{ steps.scheme.outputs.scheme }}
@@ -62,7 +62,7 @@ jobs:
 
   build-and-test:
     needs: prepare
-    runs-on: macos-15
+    runs-on: macos-26
     strategy:
       fail-fast: false
       matrix:
